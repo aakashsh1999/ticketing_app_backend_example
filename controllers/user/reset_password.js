@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const conn = require("../db");
+const conn = require("../../db");
 require("dotenv").config();
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");

@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const conn = require('../db')
+const conn = require('../../db')
 const {validationResult} = require('express-validator')
 const register = async(req, res, next) =>{
     const error = validationResult(req)
@@ -22,7 +22,7 @@ const register = async(req, res, next) =>{
 
             else{
                 const hash = await bcrypt.hash(password, 12)
-                await conn.query(`INSERT INTO user (name, email, password) VALUES('${name}', '${email}', '${hash}')`, (err, match)=>{
+                await conn.query(`INSERT INTO user (user_name, email, password) VALUES('${name}', '${email}', '${hash}')`, (err, match)=>{
                     if(!err){
                         res.status(201).json({message:"Data inserted successfully"})
                        return res.send(match)

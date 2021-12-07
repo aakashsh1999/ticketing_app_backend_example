@@ -1,4 +1,5 @@
-const { conn } = require("../../db");
+const conn = require("../../db");
+
 
 // tickets insert 
 const t_insert = (req, res )=>{
@@ -8,11 +9,14 @@ const t_insert = (req, res )=>{
   data.creation_date = req.body.creation_date;
   data.user_id = req.body.user_id;
   data.assigned_user_id = req.body.assigned_user_id;
+  console.log(data)
  //console.log(data.description , data.account_id , data.creation_date , data.user_id , data.assigned_user_id)
  var sql = `insert into tickets (description, account_id, creation_date, user_id, assigned_user_id) 
  values('${data.description}','${data.account_id}','${data.creation_date}','${data.user_id}','${data.assigned_user_id}')`;
+ console.log(sql);
       conn.query(sql, (err)=>{
         if(!err){
+          console.log(err)
            res.send("data insered")
         }
       })
@@ -21,6 +25,7 @@ const t_insert = (req, res )=>{
  const t_show = (req,res)=>{
   var sql = 'select * from tickets';
   conn.query(sql, (err,results)=>{
+    console.log(err)
     if(results.length>0){
        res.send(results)
     }

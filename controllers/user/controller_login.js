@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config();
-const conn = require('../db')
-const {validationResult} = require('express-validator')
+
+const {validationResult} = require('express-validator');
+const conn = require('../../db');
 
 const login = async (req, res, next)=>{
   const error = validationResult(req);

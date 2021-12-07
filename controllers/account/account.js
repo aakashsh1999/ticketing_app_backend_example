@@ -1,4 +1,5 @@
-const { conn } = require("../../db");
+const conn = require("../../db");
+
 const send =(req,res)=>{
     console.log("API test")
 }
@@ -11,12 +12,17 @@ const a_insert = (req, res )=>{
     data.is_active = req.body.is_active;
     data.owner_user_id = req.body.owner_user_id;
     data.assigned_user_id = req.body.assigned_user_id;
+    console.log(data)
    //console.log(data.description , data.account_id , data.creation_date , data.user_id , data.assigned_user_id)
    var sql = `INSERT INTO accounts (name, ms_start_date, is_active, owner_user_id) VALUES ('${data.name}','${data.ms_start_date}','${data.is_active}','${data.owner_user_id}')`;
-   
         conn.query(sql, (err)=>{
+          if(!err){
          res.send("data insered")
-         console.log(err)
+        
+          }else{
+            res.send(err)
+            console.log(err)
+          }
         })
   }
 
