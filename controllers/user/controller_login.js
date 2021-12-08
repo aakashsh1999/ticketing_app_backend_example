@@ -17,15 +17,17 @@ const login = async (req, res, next)=>{
     const password = req.body.password
     await conn.query(`SELECT * FROM user WHERE email = '${email}'`,  async (err, result)=>{
       if(err) throw err;
+      console.log(result[0].user_id)
       if(result.length > 0){
       await bcrypt.compare(password, result[0].password, (err, match)=>{
           if(match === true)
-         
           {
-            const id = result[0].id
+            const id = result[0].user_id
+            console.log(id)
             const token = jwt.sign({id}, process.env.DB_SSP , {expiresIn: '1h'});
-           
+           //console.log(token)
             return res.json({token: token});
+
           }
           else{
             return res.status(422).json({message:"Incorrect Password"});

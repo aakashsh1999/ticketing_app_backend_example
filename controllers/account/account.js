@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const conn = require("../../db");
 
 const send =(req,res)=>{
@@ -26,12 +27,31 @@ const a_insert = (req, res )=>{
         })
   }
 
-  const a_select = (req,res)=>{
-      var sql ="select * from accounts";
-      conn.query(sql,(err , result)=>{
-     res.send(result)
-      })
-  }
+  const a_select = async (req,res,next) => {
+    console.log("ok")
+       try{
+           if(
+               !req.headers.authorization ||
+               !req.headers.authorization.startsWith('Bearer') ||
+               !req.headers.authorization.split(' ')[1]
+           ){ 
+               return res.status(422).json({
+                   message: "Please provide the token",
+               });
+           }
+           const theToken = req.headers.authorization.split(' ')[1];
+           const decoded = jwt.verify(theToken, 'theSuperSecretPassword');
+            await conn.query("SELECT * FROM accounts",(err ,result)=>{
+               if(result.length > 0){
+                   return res.json({ result});
+               }
+               res.json({ message:"No user found" });
+            }); 
+       }
+       catch(err){
+           next(err);
+       }
+   }
   // account delete data from id
 const a_delete = (req,res)=>{
     var id = req.params.acc_id;
