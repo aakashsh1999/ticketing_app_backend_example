@@ -17,6 +17,7 @@ const login = async (req, res, next)=>{
     const password = req.body.password
     await conn.query(`SELECT * FROM user WHERE email = '${email}'`,  async (err, result)=>{
       if(err) throw err;
+      console.log(result)
       console.log(result[0].user_id)
       if(result.length > 0){
       await bcrypt.compare(password, result[0].password, (err, match)=>{
