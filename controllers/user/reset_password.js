@@ -13,7 +13,7 @@ const forgotPassword = async (req, res, next) => {
 
   try {
     const email = req.body.email;
-    await conn.query(
+     conn.query(
       `SELECT email FROM user WHERE email = '${email}'`,
       async (err, user) => {
         if (err) throw err;
@@ -24,7 +24,7 @@ const forgotPassword = async (req, res, next) => {
         } else {
           const id = user[0].id;
           const theToken = jwt.sign({ id }, process.env.R_P_KEY, {
-            expiresIn: "5m",
+            expiresIn: "1h",
           });
           const data = nodemailer.createTransport({
             service: "gmail",
@@ -42,7 +42,7 @@ const forgotPassword = async (req, res, next) => {
           };
 
           return await conn.query(
-            `UPDATE user SET resetlink = '${theToken}' WHERE email = '${email}'`,
+            `UPDATE user SET resetLink = '${theToken}' WHERE email = '${email}'`,
             (err, success) => {
               if (err) {
                 return res
@@ -70,7 +70,7 @@ const forgotPassword = async (req, res, next) => {
   }
 };
 
-const changePassword = async(req, res, next)=>{
+const changePassword = async (req, res, next)=>{
   const error = validationResult(req);
   if(!error.isEmpty()){
   return  res.status(422).json({error: error.array()});
@@ -79,24 +79,26 @@ const changePassword = async(req, res, next)=>{
    
     const resetLink = req.body.resetLink
     const newPass = req.body.newPass
+    console.log(resetLink, newPass);
     if(resetLink){
-    await jwt.verify(resetLink, process.env.R_P_KEY, async(err, decodedData)=>{
+      await jwt.verify(resetLink, process.env.R_P_KEY,(err, decodedData)=>{
       if(err){
         return res.status(401).json({error:'Incorrect Token or it is expired'});
       }
       else{
-        await conn.query(`SELECT resetLink FROM user WHERE resetLink = '${resetLink}'`, async (err, user)=>{
+          conn.query(`SELECT resetLink FROM user WHERE resetLink = '${resetLink}'`, async (err, user)=>{
           if(err){
             return res.status(400).json({error:'User with this token does not exist'});
           }
           else{
-            const hashNewPass =  await bcrypt.hash(newPass, 12)
-            conn.query(`UPDATE user SET password= '${hashNewPass}' WHERE resetLink ='${resetLink}'`, async (err)=>{
+            const hashNewPass = await bcrypt.hash(newPass, 12)
+              conn.query(`UPDATE user SET password = '${hashNewPass}' WHERE resetLink ='${resetLink}'`, async (err , result)=>{
+                console.log(result)
               if(err){
                return  res.status(400).json({error:'reset password error'});
               }
               else{
-                await conn.query(`UPDATE user SET resetlink = null WHERE  resetLink = '${resetLink}'`)
+                conn.query(`UPDATE user SET resetLink = null WHERE  resetLink = '${resetLink}'`)
                 return res.status(200).json({message:'Password Changed Successfully'});
               }
             });
