@@ -3,7 +3,7 @@ const login = require('./controllers/user/controller_login');
 const getUser = require('./controllers/user/controller_getuser')
 const {forgotPassword, changePassword}= require('./controllers/user/reset_password')
 const {registerValidator, loginValidator, resetPassword, convertPassword} = require('./validator');
-const {t_insert, t_show, t_update, t_delete, tickets} = require('./controllers/ticket/ticket');
+const {t_insert,  t_update, t_delete, tickets} = require('./controllers/ticket/ticket');
 const {send , a_insert ,a_select ,a_delete} = require('./controllers/account/account')
  const express = require('express');
 
