@@ -1,10 +1,10 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 const conn = mysql.createConnection({
-    host:"sql6.freemysqlhosting.net",
-    user:"sql6457008",
-    password:"Ug9BJw6P5W",
-    database:"sql6457008",
+    host:"localhost",
+    user:"root",
+    password:"123456",
+    database:"ticketing_backend",
     multipleStatements:true
 });
 

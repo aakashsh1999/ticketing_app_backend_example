@@ -13,7 +13,7 @@ const register = async(req, res, next) =>{
         const name = req.body.name
         const email = req.body.email
         const password = req.body.password
-        await conn.query(`SELECT email FROM user WHERE email = '${email}'`, async (err, result)=>{
+         conn.query(`SELECT email FROM user WHERE email = '${email}'`, async (err, result)=>{
             if(err) throw err;
             console.log(result);
             if(result.length == 1){
@@ -22,16 +22,13 @@ const register = async(req, res, next) =>{
 
             else{
                 const hash = await bcrypt.hash(password, 12)
-                await conn.query(`INSERT INTO user (user_name, email, password) VALUES('${name}', '${email}', '${hash}')`, (err, match)=>{
+                 conn.query(`INSERT INTO user (user_name, email, password) VALUES('${name}', '${email}', '${hash}')`, (err, match)=>{
                     if(!err){
-                        console.log(err)
-                        res.status(201).json({message:"Data inserted successfully"})
-                       return res.send(match)
+                        res.json({message:"Data inserted successfully"})
+                       
                     }
                     
-                    else{
-                        return res.status(422).json({err: err});
-                    }
+                   
                 });
             }
 

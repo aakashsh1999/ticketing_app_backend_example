@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
 const conn = require("../../db");
+const { verifyToken } = require('../ticket/auth');
+//const {verifyToken} = require('./ticket/auth')
 
 const send =(req,res)=>{
     console.log("API test")
@@ -8,24 +10,14 @@ const send =(req,res)=>{
 // account insert
 const a_insert = async(req, res, next )=>{
   try{
-    if(
-        !req.headers.authorization ||
-        !req.headers.authorization.startsWith('Bearer') ||
-        !req.headers.authorization.split(' ')[1]
-    ){ 
-        return res.status(422).json({
-            message: "Please provide the token",
-        });
-    }
-    const theToken = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.verify(theToken, 'theSuperSecretPassword')
+    const auth = verifyToken(req, res);
     name = req.body.name;
     ms_start_date = req.body.ms_start_date;
     is_active = req.body.is_active;
-    console.log(name , ms_start_date , is_active , decoded.id , )
+    console.log(name , ms_start_date , is_active , auth.id )
     
     //owner_user_id = req.body.owner_user_id;
-   var sql = `INSERT INTO accounts (name, ms_start_date, is_active, owner_user_id) VALUES ('${name}','${ms_start_date}','${is_active}','${decoded.id}')`;
+   var sql = `INSERT INTO accounts (name, ms_start_date, is_active, owner_user_id) VALUES ('${name}','${ms_start_date}','${is_active}','${auth.id}')`;
         conn.query(sql, (err)=>{
           if(!err){
          res.send("data insered")
@@ -41,20 +33,9 @@ const a_insert = async(req, res, next )=>{
 }
 
   const a_select = async (req,res,next) => {
-    console.log("ok")
        try{
-           if(
-               !req.headers.authorization ||
-               !req.headers.authorization.startsWith('Bearer') ||
-               !req.headers.authorization.split(' ')[1]
-           ){ 
-               return res.status(422).json({
-                   message: "Please provide the token",
-               });
-           }
-           const theToken = req.headers.authorization.split(' ')[1];
-           const decoded = jwt.verify(theToken, 'theSuperSecretPassword');
-            await conn.query("SELECT * FROM accounts",(err ,result)=>{
+          const auth = verifyToken(req, res);
+             conn.query("SELECT * FROM accounts",(err ,result)=>{
                if(result.length > 0){
                    return res.json({ result});
                }
@@ -68,11 +49,7 @@ const a_insert = async(req, res, next )=>{
   // account delete data from id
 const a_delete = async(req,res)=>{
   try{
-    if(!req.headers.authorization || !req.headers.authorization.startsWith('Bearer') || !req.headers.authorization.split(' ')[1]){
-      return res.status(422).json({message:"Please provide the token"})
-    }
-    const theToken = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.verify(theToken, 'theSuperSecretPassword');
+    const auth = verifyToken(req, res);
     var id = req.params.acc_id;
     var sql = `delete from accounts where acc_id = '${id}'`;
     conn.query(sql,(err)=>{
@@ -86,5 +63,7 @@ const a_delete = async(req,res)=>{
     next(err)
   }
 }
-  
+
+
+
 module.exports ={send , a_insert ,a_select ,a_delete}

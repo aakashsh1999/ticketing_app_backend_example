@@ -5,8 +5,6 @@ const app = express();
 app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
 
-
-
 conn.connect((err)=>{
     if(!err){
         console.log("Connection Successful");
