@@ -19,8 +19,9 @@ const login = async (req, res, next)=>{
       if(err) throw err;
       console.log(result)
       console.log(result[0].user_id)
+      console.log(result[0].user_name);
       if(result.length > 0){
-      await bcrypt.compare(password, result[0].password, (err, match)=>{
+      await bcrypt.compare(password, result[0].password, (  err, match)=>{
           if(match === true)
           {
             const id = result[0].user_id
