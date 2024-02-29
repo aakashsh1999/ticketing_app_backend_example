@@ -5,7 +5,9 @@ const conn = mysql.createConnection({
     user:"sql6462966",
     password:"hTv2ZCLSra",
     database:"sql6462966",
-    multipleStatements:true
+    multipleStatements:true,
+    "connector": "mysql",
+    "connectTimeout": 30000
 });
 
 module.exports=conn;
